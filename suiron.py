@@ -19,7 +19,7 @@ with Image.open('0.bmp') as im:
 y = []
 ### 推論処理
 print(f"W1.shape:{W1.shape}")
-print(W1[3])
+# print(W1[4]) W1:3*3行列が4枚
 # conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y)
 Y1 = conv2d.conv2d(im, W1, B1, 28, 28, 1, 4, 3, y)
 print(Y1)
