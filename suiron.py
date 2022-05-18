@@ -16,11 +16,11 @@ with Image.open('0.bmp') as im:
     im = np.asarray(im)               # ndarray として取り出す
 # A1 = (im.reshape(-1, 28*28)-128.0)/128.0            # (28, 28) の ndarray を (1, 784) に reshape #値域を0～255から-1.0～+1.0にスケーリング
 
-y = []
+y = np.empty(4*28*28)
 ### 推論処理
-print(f"W1.shape:{W1.shape}")
+# print(f"W1.shape:{W1.shape}")
 # print(W1[4]) W1:3*3行列が4枚
 # conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y)
 Y1 = conv2d.conv2d(im, W1, B1, 28, 28, 1, 4, 3, y)
-print(Y1)
+print(f"Y1:{Y1}")
 

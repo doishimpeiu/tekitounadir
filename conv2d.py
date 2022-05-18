@@ -18,40 +18,48 @@ from PIL import Image
 import numpy as np
 
 def conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y):
+    # print(f"x.shape:{x.shape}")
+    x = x.reshape(28*28) #test.pyのように値域を0～255から-1.0～+1.0にスケーリングした方が良いのか
+    # print(f"x.shape:{x.shape}")
+    weight = weight.reshape(in_channels * out_channels * ksize * ksize)
+    # print(f"weight.shape:{weight.shape}")
+    y_tmp = np.empty(out_channels * width * height)
     for och in range(out_channels):
-        print(f"och:{och}")
+        # print(f"och:{och}")
         for h in range(height):
-            print(f"h:{h}")
+            # print(f"h:{h}")
             for w in range(width):
-                print(f"w:{w}")
+                # print(f"w:{w}")
                 sum = 0.0
 
                 for ich in range(in_channels):
-                    print(f"ich:{ich}")
+                    # print(f"ich:{ich}")
                     for kh in range(ksize):
-                        print(f"kh:{kh}")
+                        # print(f"kh:{kh}")
                         for kw in range(ksize):
-                            print(f"kw:{kw}")
+                            # print(f"kw:{kw}")
                             ph = int(h + kh - (ksize/2))
-                            print(f"ph:{ph}")
+                            # print(f"ph:{ph}")
                             pw = int(w + kw - (ksize/2))
-                            print(f"pw:{pw}")
+                            # print(f"pw:{pw}")
 
                             #zero padding
                             if (ph < 0 or ph >= height or pw < 0 or pw >= width):
                                 continue
                             
                             pix_idx = int((ich * height + ph) * width + pw)
-                            print(f"pix_idx:{pix_idx}")
+                            # print(f"pix_idx:{pix_idx}")
                             weight_idx = int(((och * in_channels + ich) * ksize + kh) * ksize + kw)
-                            print(f"weight_idx:{weight_idx}")
+                            # print(f"weight_idx:{weight_idx}")
 
                             sum += x[pix_idx] * weight[weight_idx]
                 
                 #add bias
                 sum += bias[och]
 
-                y[(och * weight + h) * width + w] = sum
+                y_tmp[(och * height + h) * width + w] = sum
+    y = y_tmp.reshape(out_channels, width, height)
+    return y
 
 def main():
     ### 学習済みパラメータの読み込み
