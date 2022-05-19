@@ -45,3 +45,21 @@ print(f"Y2.shape:{Y2.shape}")
 Y3 = maxpool2d.maxpool2d(Y2, 28, 28, 4, 2, y)
 print(f"Y3.shape:{Y3.shape}")
 
+##
+print(f"W2.shape{W2.shape}")
+print(f"B2.shape{B2.shape}")
+y = np.empty(8*14*14)
+Y4 = conv2d.conv2d(Y3, W2, B2, 14, 14, 4, 8, 3, y)
+print(f"Y4.shape{Y4.shape}") #(8, 14, 14)
+Y4 = Y4.reshape(8*14*14)
+print(f"Y4.shape{Y4.shape}") #(1568,)
+print(len(Y4))
+Y5 = relu.relu(Y4, len(Y4), y)
+print(f"Y5.shape{Y5.shape}")
+Y5 = Y5.reshape(8, 14, 14)
+# maxpool2d(x, width, height, channels, stride, y)
+Y6 = maxpool2d.maxpool2d(Y5, 14, 14, 8, 2, 2)
+print(f"Y6.shape{Y6.shape}")
+
+
+

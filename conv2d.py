@@ -19,7 +19,7 @@ import numpy as np
 
 def conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y):
     # print(f"x.shape:{x.shape}")
-    x = x.reshape(28*28) #test.pyのように値域を0～255から-1.0～+1.0にスケーリングした方が良いのか
+    x = x.reshape(in_channels*width*height) #test.pyのように値域を0～255から-1.0～+1.0にスケーリングした方が良いのか
     # print(f"x.shape:{x.shape}")
     weight = weight.reshape(in_channels * out_channels * ksize * ksize)
     # print(f"weight.shape:{weight.shape}")
