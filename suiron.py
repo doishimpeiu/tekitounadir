@@ -2,6 +2,7 @@ from PIL import Image
 import numpy as np
 import conv2d
 import relu
+import maxpool2d
 
 ### 学習済みパラメータの読み込み
 # W1 = np.load('conv1_weight.npy').T
@@ -27,7 +28,7 @@ Y1 = conv2d.conv2d(im, W1, B1, 28, 28, 1, 4, 3, y)
 print(f"Y1.shape:{Y1.shape}")
 
 #reluに渡す時にreshapeするか、渡す前にreshapeするか
-Y1 = Y1.reshape(28*28*4)
+Y1 = Y1.reshape(4*28*28)
 print(f"Y1.shape:{Y1.shape}")
 print(len(Y1))
 Y2 = relu.relu(Y1, len(Y1), y)
@@ -38,4 +39,9 @@ print(f"Y2.shape:{Y2.shape}")
 #         input()
 #     else:
 #         print(i)
+
+Y2 = Y2.reshape(4, 28, 28)
+print(f"Y2.shape:{Y2.shape}")
+Y3 = maxpool2d.maxpool2d(Y2, 28, 28, 4, 2, y)
+print(f"Y3.shape:{Y3.shape}")
 

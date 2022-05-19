@@ -24,6 +24,7 @@ def conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y):
     weight = weight.reshape(in_channels * out_channels * ksize * ksize)
     # print(f"weight.shape:{weight.shape}")
     y_tmp = np.empty(out_channels * width * height)
+    # print(f"y_tmp.shape:{y_tmp.shape}")
     for och in range(out_channels):
         # print(f"och:{och}")
         for h in range(height):
