@@ -1,6 +1,7 @@
 from PIL import Image
 import numpy as np
 import conv2d
+import relu
 
 ### 学習済みパラメータの読み込み
 # W1 = np.load('conv1_weight.npy').T
@@ -22,5 +23,19 @@ y = np.empty(4*28*28)
 # print(W1[4]) W1:3*3行列が4枚
 # conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y)
 Y1 = conv2d.conv2d(im, W1, B1, 28, 28, 1, 4, 3, y)
-print(f"Y1:{Y1}")
+# print(f"Y1:{Y1}")
+print(f"Y1.shape:{Y1.shape}")
+
+#reluに渡す時にreshapeするか、渡す前にreshapeするか
+Y1 = Y1.reshape(28*28*4)
+print(f"Y1.shape:{Y1.shape}")
+print(len(Y1))
+Y2 = relu.relu(Y1, len(Y1), y)
+print(Y2)
+print(f"Y2.shape:{Y2.shape}")
+# for i in Y2:
+#     if i < 0:
+#         input()
+#     else:
+#         print(i)
 
