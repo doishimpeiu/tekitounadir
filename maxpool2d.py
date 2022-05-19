@@ -4,7 +4,7 @@ FLT_MAX = 100000000
 def maxpool2d(x, width, height, channels, stride, y):
   x = x.reshape(channels*width*height)
   # print(f"x.shape:{x.shape}")
-  print(int(width/stride) * int(height/stride) * channels)
+  # print(int(width/stride) * int(height/stride) * channels)
   y_tmp = np.empty(int(width/stride) * int(height/stride) * channels)
   # print(f"y_tmp.shape{y_tmp.shape}")
   for ch in range(channels):  #range()でいいか
