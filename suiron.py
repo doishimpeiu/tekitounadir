@@ -3,13 +3,18 @@ import numpy as np
 import conv2d
 import relu
 import maxpool2d
+import linear
 
 ### 学習済みパラメータの読み込み
 # W1 = np.load('conv1_weight.npy').T
-W1 = np.load('conv1_weight.npy')
+W1 = np.load('conv1_weight.npy').T
 B1 = np.load('conv1_bias.npy')
 W2 = np.load('conv2_weight.npy').T
 B2 = np.load('conv2_bias.npy')
+W3 = np.load('fc1_weight.npy').T
+B3 = np.load('fc1_bias.npy')
+W4 = np.load('fc2_weight.npy').T
+B4 = np.load('fc2_bias.npy')
 
 ### 対象画像の読み込み
 with Image.open('0.bmp') as im:
@@ -59,7 +64,15 @@ print(f"Y5.shape{Y5.shape}")
 Y5 = Y5.reshape(8, 14, 14)
 # maxpool2d(x, width, height, channels, stride, y)
 Y6 = maxpool2d.maxpool2d(Y5, 14, 14, 8, 2, 2)
-print(f"Y6.shape{Y6.shape}")
+print(f"Y6.shape{Y6.shape}") #(8, 7, 7)
 
-
-
+y = np.empty(32)
+###reshape(2)とは
+# linear(x, weight, bias, in_features, out_features, y)
+Y7 = linear.linear(Y6, W3, B3, 8*7*7, 32, y)
+print(f"Y7.shape{Y7.shape}") #(32,)
+Y8 = relu.relu(Y7, len(Y7), y)
+print(f"Y8.shape{Y8.shape}") #(32,)
+y = np.empty(10)
+Y9 = linear.linear(Y8, W4, B4, 32, 10, y)
+print(Y9)
