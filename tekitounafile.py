@@ -38,6 +38,8 @@ class Net(nn.Module):
         # 1層目の畳み込み
         # 活性化関数 (activation) はReLU
         x = self.conv1(x)
+        # with open('file1.txt', 'w') as f:
+        #     print(x, file=f)
         x = self.relu1(x)
 
         # 縮小

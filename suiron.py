@@ -17,7 +17,7 @@ W4 = np.load('fc2_weight.npy').T
 B4 = np.load('fc2_bias.npy')
 
 ### 対象画像の読み込み
-with Image.open('0.bmp') as im:
+with Image.open('5.bmp') as im:
     im = im.convert('L')              # グレー画像として取り出す
     im = im.resize((28,28))           # 28x28 に画像をリサイズ
     im = np.asarray(im)               # ndarray として取り出す
@@ -29,6 +29,8 @@ y = np.empty(4*28*28)
 # print(W1[4]) W1:3*3行列が4枚
 # conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y)
 Y1 = conv2d.conv2d(im, W1, B1, 28, 28, 1, 4, 3, y)
+with open('file2.txt', 'w') as f:
+    print(Y1, file=f)
 # print(f"Y1:{Y1}")
 # print(f"Y1.shape:{Y1.shape}")
 
