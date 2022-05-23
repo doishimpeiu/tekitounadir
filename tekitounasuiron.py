@@ -39,34 +39,34 @@ class Net(nn.Module):
         self.fc2 = nn.Linear(32, num_output_classes)
 
     def forward(self, x):
-        with open('file1_0.txt', 'w') as f:
-            for i in x[0]:
-              print(i, file=f)
+        # with open('file1_0.txt', 'w') as f:
+        #     for i in x[0]:
+        #       print(i, file=f)
         # 1層目の畳み込み
         # 活性化関数 (activation) はReLU
         W1 = np.load('conv1_weight.npy')
-        print(W1)
+        # print(W1)
         W1 = torch.from_numpy(W1.astype(np.float32)).clone()
         self.conv1.weight = nn.Parameter(W1)
         B1 = np.load('conv1_bias.npy')
         B1 = torch.from_numpy(B1.astype(np.float32)).clone()
         self.conv1.bias = nn.Parameter(B1)
         x = self.conv1(x)
-        print(f"ここのはず:{x.shape}")
-        with open('file1_1.txt', 'w') as f:
-            for i in x[0]:
-              print(i, file=f)
+        # print(f"ここのはず:{x.shape}")
+        # with open('file1_1.txt', 'w') as f:
+        #     for i in x[0]:
+        #       print(i, file=f)
         x = self.relu1(x)
-        with open('file1_2.txt', 'w') as f:
-            for i in x[0]:
-              print(i, file=f)
+        # with open('file1_2.txt', 'w') as f:
+        #     for i in x[0]:
+        #       print(i, file=f)
 
         # 縮小
         x = self.pool1(x)
-        print(f"x.shape:{x.shape}")
-        with open('file1_3.txt', 'w') as f:
-            for i in x[0]:
-              print(i, file=f)
+        # print(f"x.shape:{x.shape}")
+        # with open('file1_3.txt', 'w') as f:
+        #     for i in x[0]:
+        #       print(i, file=f)
 
         # print(f"self.conv2.weight.shape:{self.conv2.weight.shape}")
         W2 = np.load('conv2_weight.npy')

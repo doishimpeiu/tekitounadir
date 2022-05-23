@@ -8,7 +8,7 @@ import linear
 ### 学習済みパラメータの読み込み
 # W1 = np.load('conv1_weight.npy').T ### .Tをつけると、3,3, 1, 4が4, 1, 3, 3になる
 W1 = np.load('conv1_weight.npy')
-print(W1)
+# print(W1)
 B1 = np.load('conv1_bias.npy')
 W2 = np.load('conv2_weight.npy')
 B2 = np.load('conv2_bias.npy')
@@ -18,7 +18,7 @@ W4 = np.load('fc2_weight.npy')
 B4 = np.load('fc2_bias.npy')
 
 ### 対象画像の読み込み
-with Image.open('0.bmp') as im:
+with Image.open('9.bmp') as im:
     im = im.convert('L')              # グレー画像として取り出す
     im = im.resize((28,28))           # 28x28 に画像をリサイズ
     im = np.asarray(im)               # ndarray として取り出す
@@ -34,18 +34,18 @@ print(f"A1.shape:{A1.shape}")
 # print(A1)
 
 y = np.empty(4*28*28)
-with open('file2_0.txt', 'w') as f:
-    for i in A1:
-      print(i, file=f)
+# with open('file2_0.txt', 'w') as f:
+#     for i in A1:
+#       print(i, file=f)
 ### 推論処理
 # print(f"W1.shape:{W1.shape}")
 # print(W1[4]) W1:3*3行列が4枚
 # conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y)
 Y1 = conv2d.conv2d(A1, W1, B1, 28, 28, 1, 4, 3, y)
 print(f"Y1.shape:{Y1.shape}")
-with open('file2_1.txt', 'w') as f:
-    for i in Y1:
-      print(i, file=f)
+# with open('file2_1.txt', 'w') as f:
+#     for i in Y1:
+#       print(i, file=f)
 # print(f"Y1:{Y1}")
 # print(f"Y1.shape:{Y1.shape}")
 
@@ -54,10 +54,10 @@ Y1 = Y1.reshape(4*28*28)
 # print(f"Y1.shape:{Y1.shape}")
 # print(len(Y1))
 Y2 = relu.relu(Y1, len(Y1), y)
-print(f"Y2.shape:{Y2.shape}")
-with open('file2_2.txt', 'w') as f:
-    for i in Y2:
-      print(i, file=f)
+# print(f"Y2.shape:{Y2.shape}")
+# with open('file2_2.txt', 'w') as f:
+#     for i in Y2:
+#       print(i, file=f)
 # print(Y2)
 # print(f"Y2.shape:{Y2.shape}")
 # for i in Y2:
@@ -69,9 +69,9 @@ with open('file2_2.txt', 'w') as f:
 Y2 = Y2.reshape(4, 28, 28)
 # print(f"Y2.shape:{Y2.shape}")
 Y3 = maxpool2d.maxpool2d(Y2, 28, 28, 4, 2, y)
-with open('file2_3.txt', 'w') as f:
-    for i in Y2:
-      print(i, file=f)
+# with open('file2_3.txt', 'w') as f:
+#     for i in Y2:
+#       print(i, file=f)
 # print(f"Y3.shape:{Y3.shape}")
 
 ##
@@ -103,7 +103,7 @@ Y8 = relu.relu(Y7, len(Y7), y)
 # print(f"Y8.shape{Y8.shape}") #(32,)
 y = np.empty(10)
 Y9 = linear.linear(Y8, W4, B4, 32, 10, y)
-print(Y9)
+# print(Y9)
 
 ### 推論結果の出力
 print(f"Result = {np.argmax(Y9)}")
