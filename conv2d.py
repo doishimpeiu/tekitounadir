@@ -18,6 +18,18 @@ from PIL import Image
 import numpy as np
 
 def conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y):
+    # print(f"x:{type(x)}")
+    # print(f"x:{x.dtype}")
+    # print(f"weight:{type(weight)}")
+    # print(f"weight:{weight.dtype}")
+    # print(f"bias:{type(bias)}")
+    # # print(f"width:{type(width)}")
+    # # width.dtype = 'int32'
+    # # print(f"width:{width.dtype}")
+    # print(f"height:{type(height)}")
+    # print(f"in_c:{type(in_channels)}")
+    # print(f"out_c:{type(out_channels)}")
+    # print(f"ksize:{type(ksize)}")
     # print(f"x.shape:{x.shape}")
     x = x.reshape(in_channels*width*height) #test.pyのように値域を0～255から-1.0～+1.0にスケーリングした方が良いのか→してはいけないっぽい
     # print(f"x.shape:{x.shape}")
@@ -27,7 +39,7 @@ def conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y):
     # print(f"y_tmp.shape:{y_tmp.shape}")
     for och in range(out_channels):
         # print(f"och:{och}")
-        print(f"och_type:{type(och)}")
+        # print(f"och_type:{type(och)}")
         for h in range(height):
             # print(f"h:{h}")
             for w in range(width):
@@ -49,8 +61,10 @@ def conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y):
                             if (ph < 0 or ph >= height or pw < 0 or pw >= width):
                                 continue
                             
+                            pix_idx = np.array([0], dtype = 'int64')
                             pix_idx = ((ich * height + ph) * width + pw)
                             # print(f"pix_idx:{pix_idx}")
+                            weight_idx = np.array([0], dtype = 'int64')
                             weight_idx = (((och * in_channels + ich) * ksize + kh) * ksize + kw)
                             # print(f"weight_idx:{weight_idx}")
 

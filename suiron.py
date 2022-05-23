@@ -7,22 +7,32 @@ import linear
 
 ### 学習済みパラメータの読み込み
 # W1 = np.load('conv1_weight.npy').T ### .Tをつけると、3,3, 1, 4が4, 1, 3, 3になる
-W1 = np.load('conv1_weight.npy').T
+W1 = np.load('conv1_weight.npy')
+print(W1)
 B1 = np.load('conv1_bias.npy')
-W2 = np.load('conv2_weight.npy').T
+W2 = np.load('conv2_weight.npy')
 B2 = np.load('conv2_bias.npy')
-W3 = np.load('fc1_weight.npy').T
+W3 = np.load('fc1_weight.npy')
 B3 = np.load('fc1_bias.npy')
-W4 = np.load('fc2_weight.npy').T
+W4 = np.load('fc2_weight.npy')
 B4 = np.load('fc2_bias.npy')
 
 ### 対象画像の読み込み
-with Image.open('1.bmp') as im:
+with Image.open('0.bmp') as im:
     im = im.convert('L')              # グレー画像として取り出す
     im = im.resize((28,28))           # 28x28 に画像をリサイズ
     im = np.asarray(im)               # ndarray として取り出す
 # A1 = (im.reshape(-1, 28*28)-128.0)/128.0            # (28, 28) の ndarray を (1, 784) に reshape #値域を0～255から-1.0～+1.0にスケーリング
+print(f"im.shape:{im.shape}")
+
+# 真っ黒の画像を作る
+BLK = np.zeros(28*28)
+BLK_1 = BLK.reshape(1, 1, 28, 28)
 A1 = im
+# A1 = BLK_1
+print(f"A1.shape:{A1.shape}")
+# print(A1)
+
 y = np.empty(4*28*28)
 with open('file2_0.txt', 'w') as f:
     for i in A1:
@@ -93,6 +103,7 @@ Y8 = relu.relu(Y7, len(Y7), y)
 # print(f"Y8.shape{Y8.shape}") #(32,)
 y = np.empty(10)
 Y9 = linear.linear(Y8, W4, B4, 32, 10, y)
+print(Y9)
 
 ### 推論結果の出力
 print(f"Result = {np.argmax(Y9)}")

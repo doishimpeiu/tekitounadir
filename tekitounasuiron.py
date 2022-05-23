@@ -45,6 +45,7 @@ class Net(nn.Module):
         # 1層目の畳み込み
         # 活性化関数 (activation) はReLU
         W1 = np.load('conv1_weight.npy')
+        print(W1)
         W1 = torch.from_numpy(W1.astype(np.float32)).clone()
         self.conv1.weight = nn.Parameter(W1)
         B1 = np.load('conv1_bias.npy')
@@ -115,17 +116,23 @@ net = Net()
 
 # print(f"W1:{W1}")
 ### 対象画像の読み込み
-with Image.open('1.bmp') as im:
+with Image.open('0.bmp') as im:
     im = im.convert('L')              # グレー画像として取り出す
     im = im.resize((28,28))           # 28x28 に画像をリサイズ
     im = np.asarray(im)               # ndarray として取り出す
 # A1 = (im.reshape(-1, 28*28)-128.0)/128.0 
 A1 = im.reshape(1, 1, 28, 28)
 
+# 真っ黒の画像を作る
+BLK = np.zeros(28*28)
+BLK_1 = BLK.reshape(1, 1, 28, 28)
+
 ##テスト
 # numpy to tensor
 # x = torch.from_numpy(x.astype(np.float32)).clone()
 input_im = torch.from_numpy(A1.astype(np.float32)).clone()
+# input_im = torch.from_numpy(BLK_1.astype(np.float32)).clone()
+# print(input_im)
 input = input_im
 # print(f"input:{input}")
 print(f"input.shape:{input.shape}")
