@@ -19,7 +19,7 @@ import numpy as np
 
 def conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y):
     # print(f"x.shape:{x.shape}")
-    x = x.reshape(in_channels*width*height) #test.pyのように値域を0～255から-1.0～+1.0にスケーリングした方が良いのか
+    x = x.reshape(in_channels*width*height) #test.pyのように値域を0～255から-1.0～+1.0にスケーリングした方が良いのか→してはいけないっぽい
     # print(f"x.shape:{x.shape}")
     weight = weight.reshape(in_channels * out_channels * ksize * ksize)
     # print(f"weight.shape:{weight.shape}")
@@ -27,6 +27,7 @@ def conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y):
     # print(f"y_tmp.shape:{y_tmp.shape}")
     for och in range(out_channels):
         # print(f"och:{och}")
+        print(f"och_type:{type(och)}")
         for h in range(height):
             # print(f"h:{h}")
             for w in range(width):
@@ -39,41 +40,42 @@ def conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y):
                         # print(f"kh:{kh}")
                         for kw in range(ksize):
                             # print(f"kw:{kw}")
-                            ph = int(h + kh - (ksize/2))
+                            ph = (h + kh - int(ksize/2))
                             # print(f"ph:{ph}")
-                            pw = int(w + kw - (ksize/2))
+                            pw = (w + kw - int(ksize/2))
                             # print(f"pw:{pw}")
 
                             #zero padding
                             if (ph < 0 or ph >= height or pw < 0 or pw >= width):
                                 continue
                             
-                            pix_idx = int((ich * height + ph) * width + pw)
+                            pix_idx = ((ich * height + ph) * width + pw)
                             # print(f"pix_idx:{pix_idx}")
-                            weight_idx = int(((och * in_channels + ich) * ksize + kh) * ksize + kw)
+                            weight_idx = (((och * in_channels + ich) * ksize + kh) * ksize + kw)
                             # print(f"weight_idx:{weight_idx}")
 
                             sum += x[pix_idx] * weight[weight_idx]
                 
                 #add bias
                 sum += bias[och]
-
+                # print(sum)
+                # input()
                 y_tmp[(och * height + h) * width + w] = sum
     y = y_tmp.reshape(out_channels, width, height)
     return y
 
-def main():
-    ### 学習済みパラメータの読み込み
-    weight = np.load('fc1_weight.npy').T
-    bias = np.load('fc1_bias.npy')
-    in_channels = 1
-    out_channels = 4
-    ksize = 3
-    width = 14
-    height = 14
-    x = []
-    y = []
-    conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y)
+# def main():
+#     ### 学習済みパラメータの読み込み
+#     weight = np.load('fc1_weight.npy').T
+#     bias = np.load('fc1_bias.npy')
+#     in_channels = 1
+#     out_channels = 4
+#     ksize = 3
+#     width = 14
+#     height = 14
+#     x = []
+#     y = []
+#     conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y)
 
-if __name__ == '__main__':
-    main()
+# if __name__ == '__main__':
+#     main()
