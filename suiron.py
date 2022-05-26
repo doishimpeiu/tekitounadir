@@ -107,3 +107,4 @@ Y9 = linear.linear(Y8, W4, B4, 32, 10, y)
 
 ### 推論結果の出力
 print(f"Result = {np.argmax(Y9)}")
+

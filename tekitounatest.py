@@ -1,102 +1,116 @@
+from PIL import Image
+import numpy as np
 import torch
 import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
 from sklearn.metrics import accuracy_score, confusion_matrix
+import conv2d
+import relu
+import maxpool2d
+import linear
 
+def cnn(im):
+    A1 = im
+    # A1 = BLK_1
+    print(f"A1.shape:{A1.shape}")
+    # print(A1)
 
-# 1. ネットワークモデルの定義
-class Net(nn.Module):
-    def __init__(self, num_output_classes=10):
-        super(Net, self).__init__()
+    y = np.empty(4*28*28)
+    # with open('file2_0.txt', 'w') as f:
+    #     for i in A1:
+    #       print(i, file=f)
+    ### 推論処理
+    # print(f"W1.shape:{W1.shape}")
+    # print(W1[4]) W1:3*3行列が4枚
+    # conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y)
+    Y1 = conv2d.conv2d(A1, W1, B1, 28, 28, 1, 4, 3, y)
+    print(f"Y1.shape:{Y1.shape}")
+    # with open('file2_1.txt', 'w') as f:
+    #     for i in Y1:
+    #       print(i, file=f)
+    # print(f"Y1:{Y1}")
+    # print(f"Y1.shape:{Y1.shape}")
 
-        # 入力は28x28 のグレースケール画像 (チャネル数=1)
-        # 出力が8チャネルとなるような畳み込みを行う
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=4, kernel_size=3, padding=1)
+    #reluに渡す時にreshapeするか、渡す前にreshapeするか
+    Y1 = Y1.reshape(4*28*28)
+    # print(f"Y1.shape:{Y1.shape}")
+    # print(len(Y1))
+    Y2 = relu.relu(Y1, len(Y1), y)
+    # print(f"Y2.shape:{Y2.shape}")
+    # with open('file2_2.txt', 'w') as f:
+    #     for i in Y2:
+    #       print(i, file=f)
+    # print(Y2)
+    # print(f"Y2.shape:{Y2.shape}")
+    # for i in Y2:
+    #     if i < 0:
+    #         input()
+    #     else:
+    #         print(i)
 
-        # 活性化関数はReLU
-        self.relu1 = nn.ReLU(inplace=True)
+    Y2 = Y2.reshape(4, 28, 28)
+    # print(f"Y2.shape:{Y2.shape}")
+    Y3 = maxpool2d.maxpool2d(Y2, 28, 28, 4, 2, y)
+    # with open('file2_3.txt', 'w') as f:
+    #     for i in Y2:
+    #       print(i, file=f)
+    # print(f"Y3.shape:{Y3.shape}")
 
-        # 画像を28x28から14x14に縮小する
-        self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
+    ##
+    # print(f"W2.shape{W2.shape}")
+    # print(f"B2.shape{B2.shape}")
+    y = np.empty(8*14*14)
+    Y4 = conv2d.conv2d(Y3, W2, B2, 14, 14, 4, 8, 3, y)
+    # print(f"Y4.shape{Y4.shape}") #(8, 14, 14)
+    Y4 = Y4.reshape(8*14*14)
+    # print(f"Y4.shape{Y4.shape}") #(1568,)
+    # print(len(Y4))
+    Y5 = relu.relu(Y4, len(Y4), y)
+    # print(f"Y5.shape{Y5.shape}")
+    Y5 = Y5.reshape(8, 14, 14)
+    # maxpool2d(x, width, height, channels, stride, y)
+    Y6 = maxpool2d.maxpool2d(Y5, 14, 14, 8, 2, 2)
+    # print(f"Y6.shape{Y6.shape}") #(8, 7, 7)
+    #本来はここでのshapeが16, 8, 7, 7になっているはず？→16はバッチ数
 
-        # 4ch -> 8ch, 14x14 -> 7x7
-        self.conv2 = nn.Conv2d(in_channels=4, out_channels=8, kernel_size=3, padding=1)
-        self.relu2 = nn.ReLU(inplace=True)
-        self.pool2 = nn.MaxPool2d(kernel_size=2, stride=2)
+    ##Reshape
+    # Y6 = Y6.view(Y6.shape[0], -1)
 
-        # 全結合層
-        # 8chの7x7画像を1つのベクトルとみなし、要素数32のベクトルまで縮小
-        self.fc1 = nn.Linear(8 * 7 * 7, 32)
-        self.relu3 = nn.ReLU(inplace=True)
+    y = np.empty(32)
+    ###reshape(2)とは
+    # linear(x, weight, bias, in_features, out_features, y)
+    Y7 = linear.linear(Y6, W3, B3, 8*7*7, 32, y)
+    # print(f"Y7.shape{Y7.shape}") #(32,)
+    Y8 = relu.relu(Y7, len(Y7), y)
+    # print(f"Y8.shape{Y8.shape}") #(32,)
+    y = np.empty(10)
+    Y9 = linear.linear(Y8, W4, B4, 32, 10, y)
+    return Y9
 
-        # 全結合層その2
-        # 出力クラス数まで縮小
-        self.fc2 = nn.Linear(32, num_output_classes)
+### 学習済みパラメータの読み込み
+# W1 = np.load('conv1_weight.npy').T ### .Tをつけると、3,3, 1, 4が4, 1, 3, 3になる
+W1 = np.load('conv1_weight.npy')
+# print(W1)
+B1 = np.load('conv1_bias.npy')
+W2 = np.load('conv2_weight.npy')
+B2 = np.load('conv2_bias.npy')
+W3 = np.load('fc1_weight.npy')
+B3 = np.load('fc1_bias.npy')
+W4 = np.load('fc2_weight.npy')
+B4 = np.load('fc2_bias.npy')
 
-    def forward(self, x):
-        # 1層目の畳み込み
-        # 活性化関数 (activation) はReLU
-        x = self.conv1(x)
-        # with open('file1.txt', 'w') as f:
-        #     print(x, file=f)
-        x = self.relu1(x)
-
-        # 縮小
-        x = self.pool1(x)
-
-        # 2層目+縮小
-        x = self.conv2(x)
-        x = self.relu2(x)
-        x = self.pool2(x)
-        #shape:16, 8, 7, 7
-
-        # フォーマット変換 (Batch, Ch, Height, Width) -> (Batch, Ch)
-        x = x.view(x.shape[0], -1)
-        #shape:16, 392
-        # print(x.shape)
-
-        # 全結合層
-        x = self.fc1(x)
-        x = self.relu3(x)
-        x = self.fc2(x)
-
-        return x
-
-
-net = Net()
-
-# 2. データセットの読み出し法の定義
-# MNIST の学習・テストデータの取得
+#データの読み出し
 testset = torchvision.datasets.MNIST(root='./data', train=False, download=True, transform=transforms.ToTensor())
-
-# データの読み出し方法の定義
-# 1stepの学習・テストごとに16枚ずつ画像を読みだす
 testloader = torch.utils.data.DataLoader(testset, batch_size=16, shuffle=False)
-
-# ロス関数、最適化器の定義
-loss_func = nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(net.parameters(), lr=0.0001)
 
 # 4. テスト
 ans = []
 pred = []
 for i, data in enumerate(testloader, 0):
-    # print(f"i:{i}", f"data:{data}")
-    # input()
     inputs, labels = data
-    print(f"inputs:{inputs.shape}") #inputs:torch.Size([16, 1, 28, 28])
-    print(f"inputs:{inputs[0].shape}") #inputs:torch.Size([1, 28, 28])
-    print(f"inputs:{inputs[0][0].shape}")
-    # print(f"inputs:{inputs[1].shape}")
-    # print(f"inputs:{inputs[2].shape}")
-    # print(f"inputs:{inputs[3].shape}")
-    # input()
-    print(f"labels:{labels}")
-    print(f"labels:{labels[0]}")
-    input()
     
-    outputs = net(inputs)
+    outputs = cnn(inputs)
 
     ans += labels.tolist()
     pred += torch.argmax(outputs, 1).tolist()
