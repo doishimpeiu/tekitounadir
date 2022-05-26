@@ -13,7 +13,7 @@ import linear
 def cnn(im):
     A1 = im
     # A1 = BLK_1
-    print(f"A1.shape:{A1.shape}")
+    # print(f"A1.shape:{A1.shape}")
     # print(A1)
 
     y = np.empty(4*28*28)
@@ -25,7 +25,7 @@ def cnn(im):
     # print(W1[4]) W1:3*3行列が4枚
     # conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y)
     Y1 = conv2d.conv2d(A1, W1, B1, 28, 28, 1, 4, 3, y)
-    print(f"Y1.shape:{Y1.shape}")
+    # print(f"Y1.shape:{Y1.shape}")
     # with open('file2_1.txt', 'w') as f:
     #     for i in Y1:
     #       print(i, file=f)
@@ -102,18 +102,23 @@ B4 = np.load('fc2_bias.npy')
 
 #データの読み出し
 testset = torchvision.datasets.MNIST(root='./data', train=False, download=True, transform=transforms.ToTensor())
-testloader = torch.utils.data.DataLoader(testset, batch_size=16, shuffle=False)
+testloader = torch.utils.data.DataLoader(testset, batch_size=1, shuffle=False)
 
 # 4. テスト
 ans = []
 pred = []
+print(len(testloader))
 for i, data in enumerate(testloader, 0):
-    inputs, labels = data
-    
-    outputs = cnn(inputs)
+    print(i)
+    inputs_tensor, labels = data
+    inputs_np = inputs_tensor.numpy()
+    outputs = cnn(inputs_np)
+    outputs_tensor = torch.from_numpy(outputs.astype(np.float32)).clone()
 
     ans += labels.tolist()
-    pred += torch.argmax(outputs, 1).tolist()
+    pred.append(torch.argmax(outputs_tensor))
+    # if i == 10:
+    #     break
 
 print('accuracy:', accuracy_score(ans, pred))
 print('confusion matrix:')
