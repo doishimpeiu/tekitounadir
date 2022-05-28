@@ -31,7 +31,7 @@ def conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y):
     # print(f"out_c:{type(out_channels)}")
     # print(f"ksize:{type(ksize)}")
     # print(f"x.shape:{x.shape}")
-    x = x.reshape(in_channels*width*height) #test.pyのように値域を0～255から-1.0～+1.0にスケーリングした方が良いのか→してはいけないっぽい
+    x = x.reshape(in_channels*width*height) #test.pyのように値域を0～255から-1.0～+1.0にスケーリングした方が良いのか→してはいけない
     # print(f"x.shape:{x.shape}")
     weight = weight.reshape(in_channels * out_channels * ksize * ksize)
     # print(f"weight.shape:{weight.shape}")
@@ -61,10 +61,10 @@ def conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y):
                             if (ph < 0 or ph >= height or pw < 0 or pw >= width):
                                 continue
                             
-                            pix_idx = np.array([0], dtype = 'int64')
+                            pix_idx = np.array([0], dtype = 'int8')
                             pix_idx = ((ich * height + ph) * width + pw)
                             # print(f"pix_idx:{pix_idx}")
-                            weight_idx = np.array([0], dtype = 'int64')
+                            weight_idx = np.array([0], dtype = 'int8')
                             weight_idx = (((och * in_channels + ich) * ksize + kh) * ksize + kw)
                             # print(f"weight_idx:{weight_idx}")
 

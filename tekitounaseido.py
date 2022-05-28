@@ -24,7 +24,7 @@ def cnn(im):
     # print(f"W1.shape:{W1.shape}")
     # print(W1[4]) W1:3*3行列が4枚
     # conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y)
-    Y1 = conv2d.conv2d(A1, W1, B1, 28, 28, 1, 4, 3, y)
+    Y1 = conv2d.conv2d(A1, W1_int8, B1_int8, 28, 28, 1, 4, 3, y)
     # print(f"Y1.shape:{Y1.shape}")
     # with open('file2_1.txt', 'w') as f:
     #     for i in Y1:
@@ -61,7 +61,7 @@ def cnn(im):
     # print(f"W2.shape{W2.shape}")
     # print(f"B2.shape{B2.shape}")
     y = np.empty(8*14*14)
-    Y4 = conv2d.conv2d(Y3, W2, B2, 14, 14, 4, 8, 3, y)
+    Y4 = conv2d.conv2d(Y3, W2_int8, B2_int8, 14, 14, 4, 8, 3, y)
     # print(f"Y4.shape{Y4.shape}") #(8, 14, 14)
     Y4 = Y4.reshape(8*14*14)
     # print(f"Y4.shape{Y4.shape}") #(1568,)
@@ -80,25 +80,40 @@ def cnn(im):
     y = np.empty(32)
     ###reshape(2)とは
     # linear(x, weight, bias, in_features, out_features, y)
-    Y7 = linear.linear(Y6, W3, B3, 8*7*7, 32, y)
+    Y7 = linear.linear(Y6, W3_int8, B3_int8, 8*7*7, 32, y)
     # print(f"Y7.shape{Y7.shape}") #(32,)
     Y8 = relu.relu(Y7, len(Y7), y)
     # print(f"Y8.shape{Y8.shape}") #(32,)
     y = np.empty(10)
-    Y9 = linear.linear(Y8, W4, B4, 32, 10, y)
+    Y9 = linear.linear(Y8, W4_int8, B4_int8, 32, 10, y)
     return Y9
 
 ### 学習済みパラメータの読み込み
 # W1 = np.load('conv1_weight.npy').T ### .Tをつけると、3,3, 1, 4が4, 1, 3, 3になる
 # , dtype = np.int8
 W1 = np.load('conv1_weight.npy')
+# print(W1)
+# input()
+W1_int = ((W1+128)*128)
+# print(W1_int)
+# input()
+W1_int8 = np.int8(((W1+128)*128))
+# print(W1_uint8)
+# input()
 B1 = np.load('conv1_bias.npy')
+B1_int8 = np.int8(((B1+128)*128))
 W2 = np.load('conv2_weight.npy')
+W2_int8 = np.int8(((W2+128)*128))
 B2 = np.load('conv2_bias.npy')
+B2_int8 = np.int8(((B2+128)*128))
 W3 = np.load('fc1_weight.npy')
+W3_int8 = np.int8(((W3+128)*128))
 B3 = np.load('fc1_bias.npy')
+B3_int8 = np.int8(((B3+128)*128))
 W4 = np.load('fc2_weight.npy')
+W4_int8 = np.int8(((W4+128)*128))
 B4 = np.load('fc2_bias.npy')
+B4_int8 = np.int8(((B4+128)*128))
 
 #データの読み出し
 testset = torchvision.datasets.MNIST(root='./data', train=False, download=True, transform=transforms.ToTensor())
@@ -111,16 +126,20 @@ print(len(testloader))
 for i, data in enumerate(testloader, 0):
     print(i)
     inputs_tensor, labels = data
-    inputs_np = inputs_tensor.numpy()
+    # print(inputs_tensor)
+    # print(inputs_tensor*255)
+    inputs_tensor_int = torch.tensor(inputs_tensor*255, dtype=torch.uint8)
+    inputs_np = inputs_tensor_int.numpy()
     # print(inputs_np)
+    # input()
     outputs = cnn(inputs_np)
     outputs_tensor = torch.from_numpy(outputs.astype(np.float32)).clone()
 
     ans += labels.tolist()
     pred.append(torch.argmax(outputs_tensor))
-    # if i == 10:
-    #     break
-
+    if i == 100:
+        break
+    # input()
 print('accuracy:', accuracy_score(ans, pred))
 print('confusion matrix:')
 print(confusion_matrix(ans, pred))
