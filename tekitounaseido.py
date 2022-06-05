@@ -92,6 +92,10 @@ def cnn(im):
 # W1 = np.load('conv1_weight.npy').T ### .Tをつけると、3,3, 1, 4が4, 1, 3, 3になる
 # , dtype = np.int8
 W1 = np.load('conv1_weight.npy')
+#最大値を出力
+print(最大値を出力)
+print(np.max(W1))
+input()
 # print(W1)
 # input()
 W1_int = ((W1+128)*128)
