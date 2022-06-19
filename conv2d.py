@@ -53,6 +53,8 @@ def conv2d(x, weight, bias, width, height, in_channels, out_channels, ksize, y):
                         for kw in range(ksize):
                             # print(f"kw:{kw}")
                             ph = (h + kh - int(ksize/2))
+                            # print(f"int(ksize/2):{int(ksize/2)}")
+                            # input()
                             # print(f"ph:{ph}")
                             pw = (w + kw - int(ksize/2))
                             # print(f"pw:{pw}")
